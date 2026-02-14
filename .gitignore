@@ -1,0 +1,79 @@
+# ========================
+# CALZADO J&R - Archivo .gitignore
+# ========================
+# Que: Lista de archivos y carpetas que Git debe ignorar
+# Para que: No versionar archivos sensibles, dependencias ni archivos generados
+# Impacto: Protege credenciales y reduce el tamano del repositorio
+
+# ────────────────────────────
+# Python (Backend)
+# ────────────────────────────
+# Entorno virtual
+.venv/
+venv/
+ENV/
+env/
+
+# Bytecode compilado de Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Archivos de testing
+.pytest_cache/
+.coverage
+htmlcov/
+*.cover
+
+# Distribuciones
+dist/
+build/
+*.egg-info/
+
+# ────────────────────────────
+# Variables de entorno
+# ────────────────────────────
+.env
+.env.local
+.env.*.local
+
+# ────────────────────────────
+# Node.js (Frontend)
+# ────────────────────────────
+node_modules/
+pnpm-lock.yaml
+yarn.lock
+package-lock.json
+
+# Build del frontend
+dist/
+build/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# ────────────────────────────
+# IDEs y Editores
+# ────────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# ────────────────────────────
+# Sistema Operativo
+# ────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ────────────────────────────
+# Docker
+# ────────────────────────────
+# No ignoramos docker-compose.yml, pero si archivos temporales
+*.log

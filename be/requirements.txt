@@ -1,0 +1,35 @@
+# ========================
+# CALZADO J&R - Dependencias del Backend
+# ========================
+# Que: Lista de todas las dependencias Python
+# Para que: Instalar con "pip install -r requirements.txt"
+# Impacto: Sin estas bibliotecas, el backend no funciona
+
+# Framework y servidor
+fastapi>=0.115.0            # Framework web async de alto rendimiento
+uvicorn[standard]>=0.32.0   # Servidor ASGI para ejecutar FastAPI
+python-multipart>=0.0.18    # Soporte para form data
+
+# Base de datos y ORM
+sqlalchemy>=2.0.0           # ORM para interactuar con PostgreSQL
+alembic>=1.14.0             # Migraciones de base de datos versionadas
+psycopg2-binary>=2.9.0      # Driver PostgreSQL para Python
+
+# Validacion y configuracion
+pydantic>=2.0.0             # Validacion de datos y schemas
+pydantic-settings>=2.0.0    # Cargar configuracion desde .env
+email-validator>=2.0.0      # Validacion de emails
+
+# Seguridad y autenticacion
+python-jose[cryptography]>=3.3.0  # Tokens JWT
+passlib[bcrypt]>=1.7.0            # Hashing de contraseñas con bcrypt
+bcrypt>=4.0.0,<4.1.0              # Backend de bcrypt
+
+# Testing
+pytest>=8.0.0               # Framework de testing
+pytest-asyncio>=0.24.0      # Soporte para tests async
+httpx>=0.27.0               # Cliente HTTP async para tests
+pytest-cov>=6.0.0           # Cobertura de codigo
+
+# Linter y formatter
+ruff>=0.8.0                 # Linter + formatter ultrarapido
