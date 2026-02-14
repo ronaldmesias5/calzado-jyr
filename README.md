@@ -1,4 +1,4 @@
-# 👟 CALZADO J&R - Sistema de Gestión
+# 👟 CALZADO J&R - Sistema de Gestión y Producción de Calzado
 
 > Sistema de autenticación y gestión para fábrica de calzado con 3 roles: Administrador, Empleado y Cliente.
 
