@@ -1,47 +1,59 @@
-# Que: Configuracion de Docker Compose para servicios de desarrollo
-# Para que: Levantar PostgreSQL 17 con un solo comando para CALZADO J&R
-# Impacto: Sin este archivo no podemos iniciar la base de datos del proyecto
+# ========================
+# CALZADO J&R - Docker Compose
+# ========================
+# ¿Qué? Archivo de configuración para orquestar contenedores Docker.
+# ¿Para qué? Levantar PostgreSQL 17 en desarrollo sin instalar nada en el sistema.
+# ¿Impacto? Sin este archivo, tendrías que instalar PostgreSQL manualmente.
+#           Docker garantiza que todos los devs tengan el mismo entorno de BD.
+
+version: '3.8'
 
 services:
-  # Base de datos PostgreSQL 17
+  # ¿Qué? Servicio de base de datos PostgreSQL 17 Alpine (imagen ligera).
+  # ¿Para qué? Almacenar todos los datos del sistema (roles, usuarios, productos, pedidos, etc.).
+  # ¿Impacto? Es la fuente única de verdad del sistema. Sin esta BD, no hay persistencia.
   db:
-    # Que: Imagen oficial de PostgreSQL 17 (version Alpine = mas liviana)
-    # Para que: Proveer la base de datos relacional del sistema
-    # Impacto: Aqui se almacenan usuarios, roles, productos, pedidos, etc.
     image: postgres:17-alpine
     container_name: calzado_jyr_db
     restart: unless-stopped
-
+    
+    # ¿Qué? Variables de entorno que configuran la instancia de PostgreSQL.
+    # ¿Para qué? Crear la base de datos, usuario y contraseña iniciales.
+    # ¿Impacto? Estas credenciales deben coincidir con las del .env del backend.
     environment:
-      # Variables que PostgreSQL usa al inicializar
-      # IMPORTANTE: Estos valores son SOLO para desarrollo local
       POSTGRES_USER: jyr_user
-      POSTGRES_PASSWORD: jyr_password
+      POSTGRES_PASSWORD: jyr_password_dev_2026
       POSTGRES_DB: calzado_jyr_db
-
+      # ¿Qué? Locale en español para fechas y ordenamiento.
+      # ¿Para qué? Que PostgreSQL use configuración regional española.
+      # ¿Impacto? Afecta el formato de fechas y collation de texto.
+      POSTGRES_INITDB_ARGS: "--encoding=UTF-8 --lc-collate=es_CO.UTF-8 --lc-ctype=es_CO.UTF-8"
+    
+    # ¿Qué? Mapeo de puertos: puerto_host:puerto_contenedor
+    # ¿Para qué? Acceder a PostgreSQL desde el host en localhost:5432
+    # ¿Impacto? El backend se conectará a localhost:5432 para hablar con la BD.
     ports:
-      # Que: Mapea el puerto 5432 del contenedor al 5433 del host
-      # Para que: Permitir que el backend se conecte a la BD
-      # Impacto: Usamos 5433 porque tu 5432 ya esta ocupado por PostgreSQL local
-      - "5433:5432"
-
+      - "5432:5432"
+    
+    # ¿Qué? Volumen nombrado que persiste los datos de PostgreSQL.
+    # ¿Para qué? Que los datos sobrevivan aunque se destruya el contenedor.
+    # ¿Impacto? Sin esto, cada vez que bajes el contenedor perderías todos los datos.
     volumes:
-      # Que: Volumen nombrado que persiste los datos de PostgreSQL
-      # Para que: Los datos sobreviven al reinicio del contenedor
-      # Impacto: Sin volumen, cada restart de Docker borraria todos los datos
       - calzado_jyr_data:/var/lib/postgresql/data
-
+    
+    # ¿Qué? Health check para verificar que PostgreSQL está listo.
+    # ¿Para qué? Asegurar que la BD acepte conexiones antes de que el backend intente conectarse.
+    # ¿Impacto? Evita errores de conexión durante el startup.
     healthcheck:
-      # Que: Comando que Docker ejecuta para verificar que PostgreSQL responde
-      # Para que: Saber si la BD esta lista antes de que el backend intente conectarse
-      # Impacto: Evita errores de conexion al iniciar
       test: ["CMD-SHELL", "pg_isready -U jyr_user -d calzado_jyr_db"]
       interval: 10s
       timeout: 5s
       retries: 5
 
-# Volumenes nombrados
+# ¿Qué? Definición de volúmenes Docker persistentes.
+# ¿Para qué? Docker gestiona dónde se almacenan físicamente los datos.
+# ¿Impacto? Los datos persisten en el sistema de archivos de Docker,
+#           independiente de la vida del contenedor.
 volumes:
-  # Que: Volumen Docker nombrado para persistencia de datos
-  # Para que: Almacenar datos de PostgreSQL de forma permanente
   calzado_jyr_data:
+    name: calzado_jyr_postgres_data

@@ -29,20 +29,26 @@ Sistema de gestión integral para CALZADO J&R que permite:
 
 ### 1. 🔧 Administrador
 - Cuenta creada manualmente en la base de datos
-- Valida cuentas de Empleados y Clientes
+- Valida cuentas de Clientes
+- Crea cuentas de Empleados y envía credenciales por correo
 - Puede crear más cuentas de Administrador
 - Acceso completo al sistema
 
 ### 2. 👷 Empleado
-- Registro libre (pendiente de validación)
+- **NO puede registrarse por sí mismo**
+- Cuenta creada SOLO por el Administrador
+- Recibe credenciales temporales por correo
+- Debe cambiar contraseña en el primer inicio de sesión
 - Ocupaciones: Guarnición, Solador, Cortador, Emplantillador
 - Dashboard de tareas asignadas
-- Campos: Nombre, Teléfono, Email, Ocupación, Contraseña
+- Campos: Nombres, Apellidos, Teléfono, Email, Ocupación
 
 ### 3. 👤 Cliente
-- Registro libre (pendiente de validación)
+- **Puede registrarse libremente** desde el formulario público
+- Cuenta creada con `is_validated=False`
+- Espera validación del Administrador para activar su cuenta
 - Dashboard de pedidos y catálogo
-- Campos: Nombre, Teléfono, Email, Contraseña, Nombre de comercio (opcional)
+- Campos: Nombres, Apellidos, Teléfono, Email, Contraseña, Nombre de comercio (opcional)
 
 ---
 
@@ -147,20 +153,25 @@ pnpm dev
 - name (varchar: 'admin', 'employee', 'client')
 - description (varchar)
 - created_at (timestamp)
+- updated_at (timestamp)
+- deleted_at (timestamp, nullable) - Soft delete
 
 ### Tabla `users`
 - id (UUID, PK)
 - email (varchar, unique, index)
 - hashed_password (varchar)
-- full_name (varchar)
+- name (varchar) - Nombres
+- last_name (varchar) - Apellidos
 - phone (varchar)
 - role_id (UUID, FK → roles)
 - is_active (boolean, default False)
 - is_validated (boolean, default False)
+- must_change_password (boolean, default False) - Para empleados nuevos
 - business_name (varchar, nullable) - Solo clientes
 - occupation (varchar, nullable) - Solo empleados
 - created_at (timestamp)
 - updated_at (timestamp)
+- deleted_at (timestamp, nullable) - Soft delete
 - validated_by (UUID, FK → users) - Qué admin validó
 - validated_at (timestamp, nullable)
 
@@ -173,18 +184,31 @@ pnpm dev
 - **Refresh Token:** 7 días
 - **Hashing:** bcrypt
 
-### Flujo de Registro
-1. Cliente/Empleado llena formulario según su rol
-2. Cuenta creada con `is_validated=False`
-3. Mensaje: "Cuenta pendiente de validación por administrador"
+### Flujo de Registro de Cliente
+1. Cliente llena formulario de registro público
+2. Cuenta creada con `is_validated=False` e `is_active=False`
+3. Mensaje: "Cuenta creada exitosamente. Pendiente de validación por administrador"
 4. Admin valida cuenta desde su dashboard
-5. Usuario puede hacer login
+5. Sistema activa cuenta (`is_active=True`, `is_validated=True`)
+6. Cliente puede hacer login
+
+### Flujo de Creación de Empleado (por Admin)
+1. Admin llena formulario de creación de empleado
+2. Sistema genera contraseña temporal segura
+3. Sistema envía email con credenciales (email + contraseña temporal)
+4. Cuenta creada con `is_active=True`, `is_validated=True`, `must_change_password=True`
+5. Empleado hace login con credenciales recibidas
+6. Sistema fuerza cambio de contraseña antes de acceder al dashboard
 
 ### Flujo de Login
-1. Seleccionar rol (Admin/Empleado/Cliente)
-2. Ingresar email y contraseña
-3. Sistema valida credenciales y estado de cuenta
-4. Redirección según rol a su dashboard
+1. Ingresar email y contraseña
+2. Sistema valida credenciales y estado de cuenta
+3. Sistema detecta automáticamente el rol del usuario
+4. Si es primer login de Empleado → forzar cambio de contraseña
+5. Redirección automática según rol:
+   - **Admin** → Dashboard administrativo
+   - **Empleado** → Dashboard de tareas
+   - **Cliente** → Dashboard de pedidos y catálogo
 
 ---
 
