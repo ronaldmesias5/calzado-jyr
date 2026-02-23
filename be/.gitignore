@@ -1,0 +1,19 @@
+# Entorno virtual
+venv/
+__pycache__/
+*.pyc
+
+# Variables de entorno
+.env
+
+# Alembic
+alembic/versions/*.py
+!alembic/versions/.gitkeep
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

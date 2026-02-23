@@ -1,0 +1,37 @@
+# ¿Qué? Archivo de Docker Compose para orquestar servicios de desarrollo.
+# ¿Para qué? Levantar PostgreSQL 17 con un solo comando, sin instalación local.
+# ¿Impacto? Garantiza que todos los desarrolladores usen la misma versión de BD
+#           con la misma configuración.
+
+services:
+  # ────────────────────────────
+  # 🐘 PostgreSQL 17 — Base de datos principal
+  # ────────────────────────────
+  db:
+    image: postgres:17-alpine
+    container_name: calzado_jyr_db
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_USER: jyr_user
+      POSTGRES_PASSWORD: jyr_password
+      POSTGRES_DB: calzado_jyr_db
+
+    ports:
+      - "5432:5432"
+
+    volumes:
+      - calzado_jyr_data:/var/lib/postgresql/data
+      - ./db/init:/docker-entrypoint-initdb.d
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U jyr_user -d calzado_jyr_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+# ────────────────────────────
+# 📦 Volúmenes nombrados
+# ────────────────────────────
+volumes:
+  calzado_jyr_data:
