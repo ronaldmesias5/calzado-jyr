@@ -14,7 +14,7 @@ services:
 
     environment:
       POSTGRES_USER: jyr_user
-      POSTGRES_PASSWORD: jyr_password
+      POSTGRES_PASSWORD: ""
       POSTGRES_DB: calzado_jyr_db
 
     ports:

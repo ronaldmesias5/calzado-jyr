@@ -66,6 +66,7 @@ Antes de comenzar, asegúrate de tener instalado:
 
 ---
 
+
 ## 🚀 Instalación y Setup
 
 ### 1. Clonar el repositorio
@@ -75,17 +76,38 @@ git clone <url-del-repositorio>
 cd calzado-jyr
 ```
 
+
 ### 2. Levantar la base de datos
 
 ```bash
 # Inicia PostgreSQL 17 en Docker
 docker compose up -d
 
-# Verificar que esta corriendo
+# Verificar que está corriendo
 docker compose ps
 ```
 
-### 3. Configurar el Backend
+**Credenciales de conexión (por defecto):**
+
+- Usuario: `jyr_user`
+- Contraseña: *(vacía, sin contraseña)*
+- Base de datos: `calzado_jyr_db`
+
+> ⚠️ Por facilidad de pruebas, la base de datos no requiere contraseña. Si necesitas mayor seguridad, puedes establecer una contraseña en el archivo `docker-compose.yml`.
+
+### 3. Inicializar la base de datos (opcional)
+
+El proyecto incluye una carpeta `db/` con scripts SQL de inicialización. Si necesitas crear las tablas manualmente o restaurar el estado inicial, puedes ejecutar los scripts de `db/init/`:
+
+```bash
+# (Opcional) Ejecutar scripts SQL manualmente si no usas Alembic
+# Ejemplo usando psql:
+psql -h localhost -U <usuario> -d <nombre_db> -f db/init/01_create_tables.sql
+```
+
+> **Nota:** Normalmente, la creación de tablas y migraciones se gestiona automáticamente con Alembic desde el backend, pero los scripts en `db/` pueden ser útiles para restauraciones o setups iniciales.
+
+### 4. Configurar el Backend
 
 ```bash
 cd be
@@ -107,11 +129,11 @@ cp .env.example .env       # Linux/macOS
 # Ejecutar migraciones
 alembic upgrade head
 
-# Crear usuario administrador inicial (script pendiente)
+# Crear usuario administrador inicial
 python scripts/create_admin.py
 ```
 
-### 4. Configurar el Frontend
+### 5. Configurar el Frontend
 
 ```bash
 cd ../fe
@@ -212,25 +234,31 @@ pnpm dev
 
 ---
 
+
 ## 📂 Estructura del Proyecto
 
 ```
 calzado-jyr/
-├── docker-compose.yml          # PostgreSQL
+├── docker-compose.yml          # Configuración de PostgreSQL en Docker
 ├── README.md                   # Este archivo
 ├── .gitignore                  # Archivos ignorados
 │
-├── be/                         # Backend
+├── db/                         # Scripts SQL de inicialización de la base de datos
+│   └── init/
+│       └── 01_create_tables.sql  # Script para crear tablas iniciales
+│
+├── be/                         # Backend (FastAPI)
 │   ├── app/
 │   │   ├── models/             # Modelos ORM (Role, User)
 │   │   ├── schemas/            # Schemas Pydantic
-│   │   ├── routers/            # Endpoints (auth, admin)
+│   │   ├── routers/            # Endpoints (auth, admin, users)
 │   │   ├── services/           # Lógica de negocio
 │   │   └── utils/              # Utilidades (security, email)
-│   ├── alembic/                # Migraciones
+│   ├── alembic/                # Migraciones (Alembic)
+│   ├── scripts/                # Scripts utilitarios (ej: crear admin)
 │   └── requirements.txt        # Dependencias Python
 │
-└── fe/                         # Frontend
+└── fe/                         # Frontend (React + Vite)
     ├── src/
     │   ├── pages/              # Páginas por rol
     │   ├── components/         # Componentes reutilizables
@@ -238,6 +266,8 @@ calzado-jyr/
     │   └── context/            # Estado global
     └── package.json            # Dependencias Node.js
 ```
+
+> **Nota:** La carpeta `db/` contiene scripts SQL útiles para inicialización manual, restauraciones o pruebas. El flujo normal de trabajo utiliza migraciones automáticas con Alembic desde el backend.
 
 ---
 

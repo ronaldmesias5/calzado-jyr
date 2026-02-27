@@ -57,8 +57,17 @@ app.add_middleware(
 # ────────────────────────────
 # 📍 Incluir routers
 # ────────────────────────────
+
 app.include_router(auth_router)
 app.include_router(users_router)
+
+# ────────────────────────────
+# 📍 Endpoint raíz de bienvenida
+# ────────────────────────────
+@app.get("/", tags=["root"], summary="Bienvenida API")
+async def root():
+    """Mensaje de bienvenida en la raíz de la API."""
+    return {"message": "API de Calzado J&R funcionando. Visita /docs para la documentación."}
 
 
 # ────────────────────────────
