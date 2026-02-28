@@ -13,6 +13,7 @@ import { AuthLayout } from "@/components/layout/AuthLayout";
 import { InputField } from "@/components/ui/InputField";
 import { Button } from "@/components/ui/Button";
 import { Alert } from "@/components/ui/Alert";
+import { TermsModal } from "@/components/ui/TermsModal";
 
 export function RegisterPage() {
   const { register } = useAuth();
@@ -26,6 +27,8 @@ export function RegisterPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [acceptedTerms, setAcceptedTerms] = useState(false);
+  const [showTerms, setShowTerms] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -43,6 +46,12 @@ export function RegisterPage() {
       return;
     }
 
+    // Validar aceptación de términos
+    if (!acceptedTerms) {
+      setError("Debes aceptar los términos y condiciones para continuar");
+      return;
+    }
+
     setIsLoading(true);
 
     try {
@@ -55,6 +64,7 @@ export function RegisterPage() {
         "Cuenta creada exitosamente. Pendiente de validación por el administrador."
       );
       setFormData({ full_name: "", email: "", password: "", confirmPassword: "" });
+      setAcceptedTerms(false);
     } catch (err) {
       const message =
         err instanceof Error ? err.message : "Error al crear la cuenta";
@@ -65,6 +75,8 @@ export function RegisterPage() {
   };
 
   return (
+    <>
+      {showTerms && <TermsModal onClose={() => setShowTerms(false)} />}
     <AuthLayout
       title="Crear cuenta"
       subtitle="Completa tus datos para registrarte"
@@ -118,6 +130,8 @@ export function RegisterPage() {
           autoComplete="new-password"
           icon={<Lock className="h-5 w-5" />}
           onChange={handleChange}
+          onPaste={(e) => e.preventDefault()}
+          onCopy={(e) => e.preventDefault()}
         />
 
         <InputField
@@ -129,9 +143,37 @@ export function RegisterPage() {
           autoComplete="new-password"
           icon={<KeyRound className="h-5 w-5" />}
           onChange={handleChange}
+          onPaste={(e) => e.preventDefault()}
+          onCopy={(e) => e.preventDefault()}
         />
 
-        <Button type="submit" fullWidth isLoading={isLoading}>
+        {/* Checkbox de términos y condiciones */}
+        <div className="mb-5">
+          <label className="flex items-start gap-3 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={acceptedTerms}
+              onChange={(e) => {
+                setAcceptedTerms(e.target.checked);
+                setError(null);
+              }}
+              className="mt-0.5 h-4 w-4 shrink-0 rounded border-gray-300 accent-[#1e3a8a] cursor-pointer"
+            />
+            <span className="text-sm text-gray-600">
+              He leído y acepto los{" "}
+              <button
+                type="button"
+                onClick={() => setShowTerms(true)}
+                className="font-medium text-[#1e40af] underline hover:text-[#1e3a8a]"
+              >
+                Términos y Condiciones
+              </button>{" "}
+              de CALZADO J&R
+            </span>
+          </label>
+        </div>
+
+        <Button type="submit" fullWidth isLoading={isLoading} disabled={!acceptedTerms}>
           Crear cuenta
         </Button>
       </form>
@@ -146,5 +188,6 @@ export function RegisterPage() {
         </Link>
       </p>
     </AuthLayout>
+    </>
   );
 }

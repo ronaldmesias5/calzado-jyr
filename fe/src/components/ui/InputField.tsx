@@ -18,6 +18,8 @@ interface InputFieldProps {
   autoFocus?: boolean;
   icon?: ReactNode;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onPaste?: (e: React.ClipboardEvent<HTMLInputElement>) => void;
+  onCopy?: (e: React.ClipboardEvent<HTMLInputElement>) => void;
 }
 
 export function InputField({
@@ -31,6 +33,8 @@ export function InputField({
   autoFocus,
   icon,
   onChange,
+  onPaste,
+  onCopy,
 }: InputFieldProps) {
   const [showPassword, setShowPassword] = useState(false);
   const isPassword = type === "password";
@@ -59,6 +63,11 @@ export function InputField({
           autoComplete={autoComplete}
           autoFocus={autoFocus}
           onChange={onChange}
+          onPaste={isPassword ? (e) => e.preventDefault() : onPaste}
+          onCopy={isPassword ? (e) => e.preventDefault() : onCopy}
+          onCut={isPassword ? (e) => e.preventDefault() : undefined}
+          onDrop={isPassword ? (e) => e.preventDefault() : undefined}
+          onContextMenu={isPassword ? (e) => e.preventDefault() : undefined}
           aria-invalid={!!error}
           aria-describedby={error ? `${name}-error` : undefined}
           className={`block w-full rounded-lg border ${icon ? "pl-10" : "px-3"} ${

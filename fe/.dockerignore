@@ -1,0 +1,51 @@
+# ============================================================
+# CALZADO J&R — .dockerignore del Frontend
+# ============================================================
+# ¿Qué?    Archivos excluidos del contexto de build Docker para el FE.
+# ¿Para?   Evitar que node_modules (cientos de MB) y archivos de
+#           configuración local entren en la imagen.
+# ¿Impacto? Sin este archivo, `docker build` enviaría node_modules
+#           completo al daemon → builds lentos o fallidos.
+#           Los node_modules del host (plataforma diferente) podrían
+#           sobreescribir los instalados en la imagen Alpine/Linux.
+# ============================================================
+
+# ────────────────────────────
+# Dependencias — NUNCA incluir del host
+# ¿Por qué? pnpm install dentro del Dockerfile instala versiones correctas
+#           para Linux/Alpine. Las del host pueden ser de macOS/Windows.
+# ────────────────────────────
+node_modules/
+
+# ────────────────────────────
+# Output de compilación
+# ¿Por qué? Se genera dentro del contenedor en el stage builder.
+#           Incluirlo podría contaminar el build con una versión anterior.
+# ────────────────────────────
+dist/
+build/
+
+# ────────────────────────────
+# Variables de entorno — SENSIBLE
+# ────────────────────────────
+.env
+.env.local
+.env.production
+.env.*.local
+
+# ────────────────────────────
+# Herramientas de desarrollo
+# ────────────────────────────
+.git/
+.gitignore
+.vscode/
+.idea/
+
+# ────────────────────────────
+# Cache y cobertura de tests
+# ────────────────────────────
+coverage/
+.vitest/
+
+# Documentación
+*.md

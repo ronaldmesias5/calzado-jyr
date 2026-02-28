@@ -1,0 +1,63 @@
+# ============================================================
+# CALZADO J&R — .dockerignore del Backend
+# ============================================================
+# ¿Qué?    Lista de archivos/directorios excluidos del contexto
+#           de build de Docker.
+# ¿Para?   Cuando Docker construye una imagen (`docker build`),
+#           envía al daemon todos los archivos del contexto.
+#           Este archivo le dice qué NO enviar.
+# ¿Impacto? Dos beneficios clave:
+#   1. VELOCIDAD: Menos megabytes transferidos al daemon → builds
+#      más rápidos (especialmente con .venv de cientos de MB).
+#   2. SEGURIDAD: El archivo .env con contraseñas y claves secretas
+#      NUNCA entra en la imagen Docker.
+# ============================================================
+
+# ────────────────────────────
+# Entorno virtual Python
+# ¿Por qué? Los paquetes se instalan frescos desde requirements.txt.
+#           Incluirlo inflaría la imagen con binarios de la plataforma
+#           del host (distinta a linux/amd64 dentro del contenedor).
+# ────────────────────────────
+.venv/
+venv/
+env/
+
+# ────────────────────────────
+# Cache de Python
+# ────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+
+# ────────────────────────────
+# Variables de entorno — SENSIBLE
+# ¿Impacto crítico? Sin esta línea, `SECRET_KEY`, credenciales de
+# BD y SMTP estarían dentro de la imagen y visibles con
+# `docker history` o si se sube la imagen a un registry público.
+# ────────────────────────────
+.env
+.env.local
+.env.*.local
+
+# ────────────────────────────
+# Artefactos de testing y linting
+# ────────────────────────────
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+dist/
+*.egg-info/
+
+# ────────────────────────────
+# Herramientas de desarrollo
+# ────────────────────────────
+.git/
+.gitignore
+.vscode/
+.idea/
+
+# Documentación (no necesaria en producción)
+*.md

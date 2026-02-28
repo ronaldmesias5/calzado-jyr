@@ -13,7 +13,13 @@ export default defineConfig({
   },
   server: {
     port: 5173,
+    host: "0.0.0.0",
     open: false,
+    watch: {
+      // En Windows con Docker, inotify no funciona — polling detecta cambios de archivos
+      usePolling: true,
+      interval: 500,
+    },
   },
   test: {
     globals: true,

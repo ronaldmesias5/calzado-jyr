@@ -18,6 +18,7 @@ export function LoginPage() {
   const { login } = useAuth();
 
   const [formData, setFormData] = useState({ email: "", password: "" });
+  const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -78,7 +79,16 @@ export function LoginPage() {
           onChange={handleChange}
         />
 
-        <div className="mb-6 flex justify-end">
+        <div className="mb-6 flex items-center justify-between">
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+              className="h-4 w-4 rounded border-gray-300 accent-[#1e3a8a] cursor-pointer"
+            />
+            <span className="text-sm text-gray-600">Recuérdame</span>
+          </label>
           <Link
             to="/forgot-password"
             className="text-sm text-[#1e40af] hover:text-[#1e3a8a]"

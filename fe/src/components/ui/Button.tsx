@@ -9,6 +9,7 @@ interface ButtonProps {
   type?: "button" | "submit" | "reset";
   fullWidth?: boolean;
   isLoading?: boolean;
+  disabled?: boolean;
   variant?: "primary" | "secondary";
   onClick?: () => void;
 }
@@ -18,6 +19,7 @@ export function Button({
   type = "button",
   fullWidth = false,
   isLoading = false,
+  disabled = false,
   variant = "primary",
   onClick,
 }: ButtonProps) {
@@ -34,7 +36,7 @@ export function Button({
   return (
     <button
       type={type}
-      disabled={isLoading}
+      disabled={isLoading || disabled}
       onClick={onClick}
       className={`${baseClasses} ${variantClasses} ${widthClass}`}
     >

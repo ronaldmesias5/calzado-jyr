@@ -7,6 +7,7 @@
 ## 📋 Descripción
 
 Sistema de gestión integral para CALZADO J&R que permite:
+
 - Registro y validación de usuarios (Clientes y Empleados)
 - Gestión de roles y permisos
 - Control de inventario de insumos y productos
@@ -16,18 +17,19 @@ Sistema de gestión integral para CALZADO J&R que permite:
 
 ## 🛠️ Stack Tecnológico
 
-| Capa        | Tecnologías                                         |
-| ----------- | --------------------------------------------------- |
-| **Backend** | Python 3.12+, FastAPI, SQLAlchemy 2.0, Alembic, JWT |
-| **Frontend**| React 18+, Vite, TypeScript, TailwindCSS 4+         |
-| **Base de datos** | PostgreSQL 17+ (Docker Compose)                |
-| **Testing** | pytest + httpx (BE), Vitest + Testing Library (FE)  |
+| Capa              | Tecnologías                                         |
+| ----------------- | --------------------------------------------------- |
+| **Backend**       | Python 3.12+, FastAPI, SQLAlchemy 2.0, Alembic, JWT |
+| **Frontend**      | React 18+, Vite, TypeScript, TailwindCSS 4+         |
+| **Base de datos** | PostgreSQL 17+ (Docker Compose)                     |
+| **Testing**       | pytest + httpx (BE), Vitest + Testing Library (FE)  |
 
 ---
 
 ## 👥 Roles del Sistema
 
 ### 1. 🔧 Administrador
+
 - Cuenta creada manualmente en la base de datos
 - Valida cuentas de Clientes
 - Crea cuentas de Empleados y envía credenciales por correo
@@ -35,6 +37,7 @@ Sistema de gestión integral para CALZADO J&R que permite:
 - Acceso completo al sistema
 
 ### 2. 👷 Empleado
+
 - **NO puede registrarse por sí mismo**
 - Cuenta creada SOLO por el Administrador
 - Recibe credenciales temporales por correo
@@ -44,6 +47,7 @@ Sistema de gestión integral para CALZADO J&R que permite:
 - Campos: Nombres, Apellidos, Teléfono, Email, Ocupación
 
 ### 3. 👤 Cliente
+
 - **Puede registrarse libremente** desde el formulario público
 - Cuenta creada con `is_validated=False`
 - Espera validación del Administrador para activar su cuenta
@@ -56,18 +60,22 @@ Sistema de gestión integral para CALZADO J&R que permite:
 
 Antes de comenzar, asegúrate de tener instalado:
 
-| Herramienta     | Versión mínima | Verificar con              |
-| --------------- | -------------- | -------------------------- |
-| **Python**      | 3.12+          | `python --version`        |
-| **Node.js**     | 20 LTS+        | `node --version`           |
-| **pnpm**        | 9+             | `pnpm --version`           |
-| **Docker**      | 24+            | `docker --version`         |
-| **Docker Compose** | 2.20+       | `docker compose version`   |
+| Herramienta        | Versión mínima | Verificar con            |
+| ------------------ | -------------- | ------------------------ |
+| **Python**         | 3.12+          | `python --version`       |
+| **Node.js**        | 20 LTS+        | `node --version`         |
+| **pnpm**           | 9+             | `pnpm --version`         |
+| **Docker**         | 24+            | `docker --version`       |
+| **Docker Compose** | 2.20+          | `docker compose version` |
 
 ---
 
+## � Ejecución con Docker (recomendado)
 
-## 🚀 Instalación y Setup
+> **¿Qué es Docker Compose?**
+> Herramienta que define y ejecuta aplicaciones multi-contenedor. Un solo archivo
+> `docker-compose.yml` describe todos los servicios (BD, backend, frontend), sus
+> relaciones y configuración. Un solo comando los levanta todos en orden correcto.
 
 ### 1. Clonar el repositorio
 
@@ -76,94 +84,153 @@ git clone <url-del-repositorio>
 cd calzado-jyr
 ```
 
-
-### 2. Levantar la base de datos
+### 2. Configurar variables de entorno
 
 ```bash
-# Inicia PostgreSQL 17 en Docker
-docker compose up -d
+# Copiar la plantilla de variables de entorno
+cp .env.example .env
+```
 
-# Verificar que está corriendo
+Editar `.env` con tus valores reales. Los campos **obligatorios** de cambiar son:
+
+| Variable            | Por defecto                     | Qué hacer                    |
+| ------------------- | ------------------------------- | ---------------------------- |
+| `POSTGRES_PASSWORD` | `cambia_esta_contrasena_segura` | Poner una contraseña real    |
+| `SECRET_KEY`        | `CAMBIA_ESTO_...`               | Generar con el comando abajo |
+| `MAIL_PASSWORD`     | `tu_contrasena_de_app_smtp`     | Credencial SMTP real         |
+
+```bash
+# Generar SECRET_KEY segura
+python -c "import secrets; print(secrets.token_urlsafe(48))"
+```
+
+> **¿Por qué `.env` y no editar `docker-compose.yml` directamente?**
+> El `docker-compose.yml` se versiona en git. Si pones las contraseñas ahí,
+> quedan expuestas en el historial de commits. El `.env` está en `.gitignore`
+> y **nunca** llega al repositorio.
+
+### 3. Levantar el stack completo
+
+```bash
+# Construye las imágenes y levanta los 3 servicios en background
+docker compose up -d --build
+
+# Ver estado de los servicios
 docker compose ps
+
+# Ver logs en tiempo real (todos los servicios)
+docker compose logs -f
+
+# Ver logs solo del backend
+docker compose logs -f be
 ```
 
-**Credenciales de conexión (por defecto):**
+Una vez levantado, los servicios están disponibles en:
 
-- Usuario: `jyr_user`
-- Contraseña: *(vacía, sin contraseña)*
-- Base de datos: `calzado_jyr_db`
+| Servicio          | URL                        | Descripción                 |
+| ----------------- | -------------------------- | --------------------------- |
+| Frontend          | http://localhost:5173      | Interfaz React              |
+| Backend API       | http://localhost:8000      | API REST FastAPI            |
+| Documentación API | http://localhost:8000/docs | Swagger UI interactivo      |
+| PostgreSQL        | localhost:5432             | Conexión directa (DB tools) |
 
-> ⚠️ Por facilidad de pruebas, la base de datos no requiere contraseña. Si necesitas mayor seguridad, puedes establecer una contraseña en el archivo `docker-compose.yml`.
+> **¿Por qué `--build` en el primer arranque?**
+> Docker Compose necesita construir las imágenes a partir de los Dockerfiles
+> antes de iniciar los contenedores. Las veces siguientes, si el código no
+> cambió, no es necesario: `docker compose up -d`.
 
-### 3. Inicializar la base de datos (opcional)
-
-El proyecto incluye una carpeta `db/` con scripts SQL de inicialización. Si necesitas crear las tablas manualmente o restaurar el estado inicial, puedes ejecutar los scripts de `db/init/`:
+### 4. Crear el usuario administrador inicial
 
 ```bash
-# (Opcional) Ejecutar scripts SQL manualmente si no usas Alembic
-# Ejemplo usando psql:
-psql -h localhost -U <usuario> -d <nombre_db> -f db/init/01_create_tables.sql
+# Ejecutar el script dentro del contenedor del backend
+docker compose exec be python scripts/create_admin.py
 ```
 
-> **Nota:** Normalmente, la creación de tablas y migraciones se gestiona automáticamente con Alembic desde el backend, pero los scripts en `db/` pueden ser útiles para restauraciones o setups iniciales.
+> **¿Qué hace `docker compose exec`?**
+> Ejecuta un comando dentro de un contenedor ya corriendo. `be` es el nombre
+> del servicio en `docker-compose.yml`. El script `create_admin.py` crea el
+> primer usuario admin directamente en la BD.
 
-### 4. Configurar el Backend
+### 5. Comandos útiles del día a día
+
+```bash
+# Detener los servicios (conserva los datos)
+docker compose down
+
+# Detener Y BORRAR todos los datos de la BD (reset completo)
+docker compose down -v
+
+# Reconstruir solo el backend (después de cambiar requirements.txt)
+docker compose build be
+
+# Conectarse al shell del contenedor de la BD
+docker compose exec db psql -U jyr_user -d calzado_jyr_db
+
+# Ver consumo de recursos de los contenedores
+docker stats
+```
+
+---
+
+## 🚀 Instalación sin Docker (desarrollo local)
+
+> Solo necesario si no quieres usar Docker. Requiere Python 3.12+, Node.js 20+ y
+> PostgreSQL 17+ instalados localmente.
+
+### Backend
 
 ```bash
 cd be
 
 # Crear entorno virtual
 python -m venv .venv
-
-# Activar entorno virtual
-.venv\Scripts\activate     # Windows
 source .venv/bin/activate  # Linux/macOS
 
 # Instalar dependencias
 pip install -r requirements.txt
 
 # Crear archivo .env desde plantilla
-copy .env.example .env     # Windows
-cp .env.example .env       # Linux/macOS
-
-# Ejecutar migraciones
-alembic upgrade head
+cp .env.example .env
+# Editar .env: DATABASE_URL debe apuntar a tu PostgreSQL local
 
 # Crear usuario administrador inicial
 python scripts/create_admin.py
 ```
 
-### 5. Configurar el Frontend
+### Frontend
 
 ```bash
-cd ../fe
+cd fe
 
 # Instalar dependencias
-pnpm install
+npm install
 
 # Crear archivo .env desde plantilla
-copy .env.example .env     # Windows
-cp .env.example .env       # Linux/macOS
+cp .env.example .env
 ```
 
 ---
 
-## ▶️ Ejecución
+## ▶️ Ejecución sin Docker
 
 ### Backend
+
 ```bash
 cd be
-.venv\Scripts\activate     # Windows
+source .venv/bin/activate
 uvicorn app.main:app --reload
 ```
+
 - API: http://localhost:8000
 - Documentación: http://localhost:8000/docs
 
 ### Frontend
+
 ```bash
 cd fe
-pnpm dev
+npm run dev
 ```
+
 - App: http://localhost:5173
 
 ---
@@ -171,6 +238,7 @@ pnpm dev
 ## 🗄️ Estructura de Base de Datos
 
 ### Tabla `roles`
+
 - id (UUID, PK)
 - name (varchar: 'admin', 'employee', 'client')
 - description (varchar)
@@ -179,6 +247,7 @@ pnpm dev
 - deleted_at (timestamp, nullable) - Soft delete
 
 ### Tabla `users`
+
 - id (UUID, PK)
 - email (varchar, unique, index)
 - hashed_password (varchar)
@@ -207,6 +276,7 @@ pnpm dev
 - **Hashing:** bcrypt
 
 ### Flujo de Registro de Cliente
+
 1. Cliente llena formulario de registro público
 2. Cuenta creada con `is_validated=False` e `is_active=False`
 3. Mensaje: "Cuenta creada exitosamente. Pendiente de validación por administrador"
@@ -215,6 +285,7 @@ pnpm dev
 6. Cliente puede hacer login
 
 ### Flujo de Creación de Empleado (por Admin)
+
 1. Admin llena formulario de creación de empleado
 2. Sistema genera contraseña temporal segura
 3. Sistema envía email con credenciales (email + contraseña temporal)
@@ -223,6 +294,7 @@ pnpm dev
 6. Sistema fuerza cambio de contraseña antes de acceder al dashboard
 
 ### Flujo de Login
+
 1. Ingresar email y contraseña
 2. Sistema valida credenciales y estado de cuenta
 3. Sistema detecta automáticamente el rol del usuario
@@ -234,40 +306,45 @@ pnpm dev
 
 ---
 
-
 ## 📂 Estructura del Proyecto
 
 ```
 calzado-jyr/
-├── docker-compose.yml          # Configuración de PostgreSQL en Docker
+├── docker-compose.yml          # Orquesta los 3 servicios (BD + BE + FE)
+├── .env.example                # Plantilla de variables de entorno (raíz)
 ├── README.md                   # Este archivo
-├── .gitignore                  # Archivos ignorados
 │
-├── db/                         # Scripts SQL de inicialización de la base de datos
+├── db/                         # Scripts SQL de la base de datos
 │   └── init/
-│       └── 01_create_tables.sql  # Script para crear tablas iniciales
+│       ├── 01_create_tables.sql       # Tablas, roles iniciales e índices básicos
+│       └── 02_triggers_and_indexes.sql # Triggers updated_at, índices parciales y constraints
 │
 ├── be/                         # Backend (FastAPI)
+│   ├── Dockerfile              # Build multi-stage: base → dev → prod
+│   ├── .dockerignore           # Excluye .venv, __pycache__, .env del contexto Docker
+│   ├── .env.example            # Plantilla de variables para desarrollo sin Docker
+│   ├── requirements.txt        # Dependencias Python fijadas con versión mínima
 │   ├── app/
-│   │   ├── models/             # Modelos ORM (Role, User)
-│   │   ├── schemas/            # Schemas Pydantic
-│   │   ├── routers/            # Endpoints (auth, admin, users)
+│   │   ├── models/             # Modelos ORM (Role, User, PasswordResetToken)
+│   │   ├── schemas/            # Schemas Pydantic para validación
+│   │   ├── routers/            # Endpoints (auth, users)
 │   │   ├── services/           # Lógica de negocio
 │   │   └── utils/              # Utilidades (security, email)
-│   ├── alembic/                # Migraciones (Alembic)
-│   ├── scripts/                # Scripts utilitarios (ej: crear admin)
-│   └── requirements.txt        # Dependencias Python
+│   ├── alembic/                # Migraciones de BD (Alembic)
+│   └── scripts/                # Scripts utilitarios (crear admin)
 │
 └── fe/                         # Frontend (React + Vite)
+    ├── Dockerfile              # Build multi-stage: base → dev → builder → prod(nginx)
+    ├── .dockerignore           # Excluye node_modules y dist del contexto Docker
+    ├── nginx.conf              # Config nginx para SPA (React Router + caché de assets)
+    ├── .env.example            # Plantilla VITE_API_URL
     ├── src/
-    │   ├── pages/              # Páginas por rol
+    │   ├── pages/              # Páginas (Login, Dashboard, Register, etc.)
     │   ├── components/         # Componentes reutilizables
-    │   ├── api/                # Clientes HTTP
-    │   └── context/            # Estado global
+    │   ├── api/                # Clientes HTTP (axios)
+    │   └── context/            # Estado global (AuthContext)
     └── package.json            # Dependencias Node.js
 ```
-
-> **Nota:** La carpeta `db/` contiene scripts SQL útiles para inicialización manual, restauraciones o pruebas. El flujo normal de trabajo utiliza migraciones automáticas con Alembic desde el backend.
 
 ---
 
