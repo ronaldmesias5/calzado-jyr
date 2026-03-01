@@ -14,6 +14,7 @@ import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from sqlalchemy import select
+from datetime import datetime, timezone
 
 from app.database import SessionLocal
 from app.models.role import Role
@@ -55,6 +56,7 @@ def create_admin() -> None:
             role_id=admin_role.id,
             is_active=True,
             is_validated=True,
+            validated_at=datetime.now(timezone.utc),
         )
 
         db.add(admin_user)
