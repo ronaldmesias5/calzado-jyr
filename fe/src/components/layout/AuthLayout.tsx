@@ -46,7 +46,7 @@ export function AuthLayout({ children, title, subtitle }: AuthLayoutProps) {
       {/* ════════════════════════════════════════ */}
       <main className="flex flex-1 items-center justify-center px-4 py-12">
         <div className="w-full max-w-md">
-          <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm sm:p-8">
+          <div className="rounded-xl border border-[#1e40af] bg-white p-6 shadow-sm sm:p-8">
             <div className="mb-6">
               <h2 className="text-xl font-bold text-gray-900">{title}</h2>
               {subtitle && (
