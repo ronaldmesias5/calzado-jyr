@@ -23,7 +23,30 @@ class UserCreate(BaseModel):
 
     email: EmailStr
     full_name: str
+    phone: str | None = None
+    identity_document: str | None = None
+    business_name: str | None = None
     password: str
+
+    @field_validator("phone")
+    @classmethod
+    def validate_phone(cls, v: str | None) -> str | None:
+        """Valida el formato del teléfono si se proporciona."""
+        if v is not None:
+            v = v.strip()
+            if len(v) < 7 or len(v) > 20:
+                raise ValueError("El teléfono debe tener entre 7 y 20 caracteres")
+        return v
+
+    @field_validator("identity_document")
+    @classmethod
+    def validate_identity_document(cls, v: str | None) -> str | None:
+        """Valida el documento de identidad si se proporciona."""
+        if v is not None:
+            v = v.strip()
+            if len(v) < 5 or len(v) > 20:
+                raise ValueError("El documento de identidad debe tener entre 5 y 20 caracteres")
+        return v
 
     @field_validator("password")
     @classmethod
@@ -118,6 +141,7 @@ class UserResponse(BaseModel):
     email: str
     full_name: str
     phone: str | None
+    identity_document: str | None
     is_active: bool
     is_validated: bool
     role_name: str | None = None

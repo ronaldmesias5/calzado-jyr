@@ -31,6 +31,7 @@ def get_me(
         email=current_user.email,
         full_name=current_user.full_name,
         phone=current_user.phone,
+        identity_document=current_user.identity_document,
         is_active=current_user.is_active,
         is_validated=current_user.is_validated,
         role_name=current_user.role.name if current_user.role else None,

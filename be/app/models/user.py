@@ -53,6 +53,11 @@ class User(Base):
         nullable=True,
     )
 
+    identity_document: Mapped[str | None] = mapped_column(
+        String(20),
+        nullable=True,
+    )
+
     # ────────────────────────────
     # 🔗 Relación con roles
     # ────────────────────────────

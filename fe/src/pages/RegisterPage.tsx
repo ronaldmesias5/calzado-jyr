@@ -7,7 +7,7 @@
 
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { User, Mail, Lock, KeyRound } from "lucide-react";
+import { User, Mail, Lock, KeyRound, Phone, FileText, Store } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { AuthLayout } from "@/components/layout/AuthLayout";
 import { InputField } from "@/components/ui/InputField";
@@ -21,6 +21,9 @@ export function RegisterPage() {
   const [formData, setFormData] = useState({
     full_name: "",
     email: "",
+    phone: "",
+    identity_document: "",
+    business_name: "",
     password: "",
     confirmPassword: "",
   });
@@ -58,12 +61,23 @@ export function RegisterPage() {
       await register({
         full_name: formData.full_name,
         email: formData.email,
+        phone: formData.phone || undefined,
+        identity_document: formData.identity_document || undefined,
+        business_name: formData.business_name || undefined,
         password: formData.password,
       });
       setSuccess(
         "Cuenta creada exitosamente. Pendiente de validación por el administrador."
       );
-      setFormData({ full_name: "", email: "", password: "", confirmPassword: "" });
+      setFormData({ 
+        full_name: "", 
+        email: "", 
+        phone: "",
+        identity_document: "",
+        business_name: "",
+        password: "", 
+        confirmPassword: "" 
+      });
       setAcceptedTerms(false);
     } catch (err) {
       const message =
@@ -118,6 +132,38 @@ export function RegisterPage() {
           placeholder="correo@ejemplo.com"
           autoComplete="email"
           icon={<Mail className="h-5 w-5" />}
+          onChange={handleChange}
+        />
+
+
+        <InputField
+          label="Teléfono"
+          name="phone"
+          type="tel"
+          value={formData.phone}
+          placeholder="+57 3001234567"
+          autoComplete="tel"
+          icon={<Phone className="h-5 w-5" />}
+          onChange={handleChange}
+        />
+
+        <InputField
+          label="Documento de identidad"
+          name="identity_document"
+          type="text"
+          value={formData.identity_document}
+          placeholder="1234567890"
+          icon={<FileText className="h-5 w-5" />}
+          onChange={handleChange}
+        />
+
+        <InputField
+          label="Nombre del comercio (opcional)"
+          name="business_name"
+          type="text"
+          value={formData.business_name}
+          placeholder="Ej: Tienda Mi Calzado"
+          icon={<Store className="h-5 w-5" />}
           onChange={handleChange}
         />
 

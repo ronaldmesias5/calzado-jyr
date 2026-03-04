@@ -11,6 +11,9 @@
 export interface RegisterRequest {
   email: string;
   full_name: string;
+  phone?: string;
+  identity_document?: string;
+  business_name?: string;
   password: string;
 }
 
@@ -46,6 +49,7 @@ export interface UserResponse {
   email: string;
   full_name: string;
   phone: string | null;
+  identity_document: string | null;
   is_active: boolean;
   is_validated: boolean;
   role_name: string | null;

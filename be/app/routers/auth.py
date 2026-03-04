@@ -50,6 +50,7 @@ def register(
         email=user.email,
         full_name=user.full_name,
         phone=user.phone,
+        identity_document=user.identity_document,
         is_active=user.is_active,
         is_validated=user.is_validated,
         role_name=user.role.name if user.role else None,

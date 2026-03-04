@@ -62,6 +62,9 @@ def register_user(db: Session, user_data: UserCreate) -> User:
     new_user = User(
         email=user_data.email,
         full_name=user_data.full_name,
+        phone=user_data.phone,
+        identity_document=user_data.identity_document,
+        business_name=user_data.business_name,
         hashed_password=hash_password(user_data.password),
         role_id=client_role.id,
         is_active=False,
