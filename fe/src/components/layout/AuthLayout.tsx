@@ -27,11 +27,11 @@ export function AuthLayout({ children, title, subtitle }: AuthLayoutProps) {
               alt="CALZADO J&R - Águila"
               className="h-10 w-10 object-contain"
             />
-            <span className="text-lg font-bold text-[#1e3a8a]">CALZADO J&R</span>
+            <span className="text-lg font-bold text-[#000000]">CALZADO J&R</span>
           </Link>
           <Link
             to="/login"
-            className="text-sm font-medium text-[#1e40af] hover:text-[#1e3a8a]"
+            className="text-sm font-medium text-[#000000] hover:text-[#1e3a8a]"
           >
             Iniciar sesión
           </Link>
