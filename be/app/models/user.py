@@ -63,6 +63,18 @@ class User(Base):
         nullable=True,
     )
 
+    identity_document_type_id: Mapped[uuid.UUID | None] = mapped_column(
+        UUID(as_uuid=True),
+        ForeignKey("type_document.id"),
+        nullable=True,
+    )
+
+    # ────────────────────────────
+    # 🔗 Relaciones
+    # ────────────────────────────
+
+    identity_document_type = relationship("TypeDocument", back_populates="users", lazy="selectin")
+
     # ────────────────────────────
     # 🔗 Relación con roles
     # ────────────────────────────

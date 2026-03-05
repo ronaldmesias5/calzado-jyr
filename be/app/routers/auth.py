@@ -52,6 +52,8 @@ def register(
         last_name=user.last_name,
         phone=user.phone,
         identity_document=user.identity_document,
+        identity_document_type_id=user.identity_document_type_id,
+        identity_document_type_name=user.identity_document_type.name if user.identity_document_type else None,
         is_active=user.is_active,
         is_validated=user.is_validated,
         must_change_password=user.must_change_password,

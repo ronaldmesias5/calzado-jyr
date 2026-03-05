@@ -41,6 +41,7 @@ class UserCreate(BaseModel):
     last_name: str
     phone: str | None = None
     identity_document: str | None = None
+    identity_document_type_id: uuid.UUID | None = None
     business_name: str | None = None
     occupation: OccupationType | None = None
     password: str
@@ -195,6 +196,8 @@ class UserResponse(BaseModel):
     last_name: str
     phone: str | None
     identity_document: str | None
+    identity_document_type_id: uuid.UUID | None = None
+    identity_document_type_name: str | None = None
     is_active: bool
     is_validated: bool
     must_change_password: bool

@@ -5,6 +5,15 @@
  */
 
 // ════════════════════════════════════════
+// � Tipos de Documento
+// ════════════════════════════════════════
+
+export interface TypeDocument {
+  id: string;
+  name: string;
+}
+
+// ════════════════════════════════════════
 // 📥 Tipos de REQUEST
 // ════════════════════════════════════════
 
@@ -14,6 +23,7 @@ export interface RegisterRequest {
   last_name: string;
   phone?: string;
   identity_document?: string;
+  identity_document_type_id?: string;
   business_name?: string;
   password: string;
 }
@@ -52,8 +62,11 @@ export interface UserResponse {
   last_name: string;
   phone: string | null;
   identity_document: string | null;
+  identity_document_type_id: string | null;
+  identity_document_type_name: string | null;
   is_active: boolean;
   is_validated: boolean;
+  must_change_password: boolean;
   role_name: string | null;
   business_name: string | null;
   occupation: string | null;

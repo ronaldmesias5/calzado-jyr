@@ -5,7 +5,7 @@
  * ¿Impacto? La cuenta queda pendiente de validación por el administrador.
  */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { User, Mail, Lock, KeyRound, Phone, FileText, Store } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
@@ -14,6 +14,8 @@ import { InputField } from "@/components/ui/InputField";
 import { Button } from "@/components/ui/Button";
 import { Alert } from "@/components/ui/Alert";
 import { TermsModal } from "@/components/ui/TermsModal";
+import { getTypeDocuments } from "@/api/type-documents";
+import { TypeDocument } from "@/types/auth";
 
 export function RegisterPage() {
   const { register } = useAuth();
@@ -23,18 +25,33 @@ export function RegisterPage() {
     last_name: "",
     email: "",
     phone: "",
+    identity_document_type_id: "",
     identity_document: "",
     business_name: "",
     password: "",
     confirmPassword: "",
   });
+  const [typeDocuments, setTypeDocuments] = useState<TypeDocument[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [acceptedTerms, setAcceptedTerms] = useState(false);
   const [showTerms, setShowTerms] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Cargar tipos de documentos al montar
+  useEffect(() => {
+    const loadTypeDocuments = async () => {
+      try {
+        const docs = await getTypeDocuments();
+        setTypeDocuments(docs);
+      } catch (err) {
+        console.error("Error loading type documents:", err);
+      }
+    };
+    loadTypeDocuments();
+  }, []);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
     setError(null);
   };
@@ -64,6 +81,7 @@ export function RegisterPage() {
         last_name: formData.last_name,
         email: formData.email,
         phone: formData.phone || undefined,
+        identity_document_type_id: formData.identity_document_type_id || undefined,
         identity_document: formData.identity_document || undefined,
         business_name: formData.business_name || undefined,
         password: formData.password,
@@ -76,6 +94,7 @@ export function RegisterPage() {
         last_name: "",
         email: "", 
         phone: "",
+        identity_document_type_id: "",
         identity_document: "",
         business_name: "",
         password: "", 
@@ -149,6 +168,29 @@ export function RegisterPage() {
           onChange={handleChange}
         />
 
+        {/* Selector de tipo de documento */}
+        <div className="mb-4">
+          <label htmlFor="identity_document_type_id" className="block text-sm font-medium text-gray-700 mb-2">
+            Tipo de documento
+          </label>
+          <div className="relative">
+            <FileText className="absolute left-3 top-3 h-5 w-5 text-gray-400 pointer-events-none" />
+            <select
+              id="identity_document_type_id"
+              name="identity_document_type_id"
+              value={formData.identity_document_type_id}
+              onChange={handleChange}
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1e40af] focus:border-transparent outline-none transition"
+            >
+              <option value="">Selecciona tu tipo de documento</option>
+              {typeDocuments.map((doc) => (
+                <option key={doc.id} value={doc.id}>
+                  {doc.name}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
 
         <InputField
           label="Teléfono"
