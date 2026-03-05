@@ -271,7 +271,7 @@ CREATE TABLE IF NOT EXISTS brands (
 -- TABLA: references
 -- Referencias o estilos específicos de producto
 -- ============================================================
-CREATE TABLE IF NOT EXISTS references (
+CREATE TABLE IF NOT EXISTS "references" (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     brand_id UUID NOT NULL REFERENCES brands(id),
     name VARCHAR(255) NOT NULL,
@@ -289,7 +289,7 @@ CREATE TABLE IF NOT EXISTS products (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     category_id UUID NOT NULL REFERENCES categories(id),
     brand_id UUID NOT NULL REFERENCES brands(id),
-    reference_id UUID NOT NULL REFERENCES references(id),
+    reference_id UUID NOT NULL REFERENCES "references"(id),
     name VARCHAR(255) NOT NULL,
     description TEXT,
     state BOOLEAN DEFAULT TRUE NOT NULL,
