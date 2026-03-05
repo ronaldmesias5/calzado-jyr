@@ -412,7 +412,7 @@ CREATE TABLE IF NOT EXISTS order_details (
 -- ============================================================
 CREATE TABLE IF NOT EXISTS type_document (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    etype_document VARCHAR(100) NOT NULL,
+    name VARCHAR(100) UNIQUE NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
     deleted_at TIMESTAMP WITH TIME ZONE
@@ -463,21 +463,6 @@ CREATE TABLE IF NOT EXISTS incidence (
     description TEXT,
     state incidence_status DEFAULT 'abierta' NOT NULL,
     report_date TIMESTAMP WITH TIME ZONE NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
-    deleted_at TIMESTAMP WITH TIME ZONE
-);
-
--- ============================================================
--- TABLA: notifications
--- Sistema de notificaciones para usuarios
---   state (BOOLEAN): Indica si fue leída (true) o no leída (false)
---   creation_date (TIMESTAMP): Fecha de creación de la notificación
---   created_at (TIMESTAMP): Timestamp de creación en sistema
---   updated_at (TIMESTAMP): Última actualización
---   deleted_at (TIMESTAMP): Soft delete para auditoría
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    etype_document VARCHAR(100) NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
     deleted_at TIMESTAMP WITH TIME ZONE
