@@ -67,7 +67,7 @@ export function RegisterPage() {
         password: formData.password,
       });
       setSuccess(
-        "Cuenta creada exitosamente. Pendiente de validación por el administrador."
+        "Cuenta creada exitosamente. Pendiente de validación por el administrador. Revisa tu correo para la confirmación de tu cuenta."
       );
       setFormData({ 
         full_name: "", 

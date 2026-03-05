@@ -39,10 +39,10 @@ Sistema de gestión integral para CALZADO J&R que permite:
 ### 2. 👷 Empleado
 
 - **NO puede registrarse por sí mismo**
-- Cuenta creada SOLO por el Administrador
+- Cuenta creada SOLO por el Administrador o por el Jefe
 - Recibe credenciales temporales por correo
 - Debe cambiar contraseña en el primer inicio de sesión
-- Ocupaciones: Guarnición, Solador, Cortador, Emplantillador
+- Ocupaciones: Jefe (gestión y validación), Cortador, Guarnecedor, Solador, Emplantillador
 - Dashboard de tareas asignadas
 - Campos: Nombres, Apellidos, Teléfono, Email, Ocupación
 
@@ -203,7 +203,7 @@ python scripts/create_admin.py
 cd fe
 
 # Instalar dependencias
-npm install
+pnpm install
 
 # Crear archivo .env desde plantilla
 cp .env.example .env
@@ -228,7 +228,7 @@ uvicorn app.main:app --reload
 
 ```bash
 cd fe
-npm run dev
+pnpm run dev
 ```
 
 - App: http://localhost:5173
@@ -259,11 +259,11 @@ npm run dev
 - is_validated (boolean, default False)
 - must_change_password (boolean, default False) - Para empleados nuevos
 - business_name (varchar, nullable) - Solo clientes
-- occupation (varchar, nullable) - Solo empleados
+- occupation (occupation_type ENUM, nullable) - Solo empleados. Valores: 'jefe', 'cortador', 'guarnecedor', 'solador', 'emplantillador'
 - created_at (timestamp)
 - updated_at (timestamp)
 - deleted_at (timestamp, nullable) - Soft delete
-- validated_by (UUID, FK → users) - Qué admin validó
+- validated_by (UUID, FK → users, nullable) - Qué admin validó
 - validated_at (timestamp, nullable)
 
 ---
@@ -277,7 +277,7 @@ npm run dev
 
 ### Flujo de Registro de Cliente
 
-1. Cliente llena formulario de registro público
+1. Cliente diligencia formulario de registro público
 2. Cuenta creada con `is_validated=False` e `is_active=False`
 3. Mensaje: "Cuenta creada exitosamente. Pendiente de validación por administrador"
 4. Admin valida cuenta desde su dashboard
@@ -286,7 +286,7 @@ npm run dev
 
 ### Flujo de Creación de Empleado (por Admin)
 
-1. Admin llena formulario de creación de empleado
+1. Admin diligencia formulario de creación de empleado
 2. Sistema genera contraseña temporal segura
 3. Sistema envía email con credenciales (email + contraseña temporal)
 4. Cuenta creada con `is_active=True`, `is_validated=True`, `must_change_password=True`
@@ -313,6 +313,8 @@ calzado-jyr/
 ├── docker-compose.yml          # Orquesta los 3 servicios (BD + BE + FE)
 ├── .env.example                # Plantilla de variables de entorno (raíz)
 ├── README.md                   # Este archivo
+├── docs/                       # Documentación complementaria
+│   └── manual-identidad-corporativa.md # Guía de colores, logos y marca
 │
 ├── db/                         # Scripts SQL de la base de datos
 │   └── init/
@@ -345,16 +347,6 @@ calzado-jyr/
     │   └── context/            # Estado global (AuthContext)
     └── package.json            # Dependencias Node.js
 ```
-
----
-
-## 🎨 Colores de la Marca
-
-- **Primario:** Azul Navy #1e40af (del águila del logo)
-- **Secundario:** Dorado #d97706 (del texto J&R)
-- **Fondo claro:** #f9fafb
-- **Fondo oscuro:** #111827
-- **Sin degradados:** Colores sólidos únicamente
 
 ---
 
