@@ -193,6 +193,16 @@ export function RegisterPage() {
         </div>
 
         <InputField
+          label="Documento de identidad"
+          name="identity_document"
+          type="text"
+          value={formData.identity_document}
+          placeholder="1234567890"
+          icon={<FileText className="h-5 w-5" />}
+          onChange={handleChange}
+        />
+
+        <InputField
           label="Teléfono"
           name="phone"
           type="tel"
@@ -200,16 +210,6 @@ export function RegisterPage() {
           placeholder="+57 3001234567"
           autoComplete="tel"
           icon={<Phone className="h-5 w-5" />}
-          onChange={handleChange}
-        />
-
-        <InputField
-          label="Documento de identidad"
-          name="identity_document"
-          type="text"
-          value={formData.identity_document}
-          placeholder="1234567890"
-          icon={<FileText className="h-5 w-5" />}
           onChange={handleChange}
         />
 

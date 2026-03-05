@@ -1,9 +1,12 @@
 -- =====================================================
 -- Seed: Tipos de Documentos Válidos
 -- =====================================================
--- Inserta los tipos de documentos de identidad estándar
--- para Colombia en la tabla type_document.
--- Ejecutarse después de crear las tablas principales.
+-- ¡NO CAMBIAR EL NOMBRE DE ESTE ARCHIVO!
+-- Este archivo debe ejecutarse DESPUÉS de crear todas las tablas.
+-- Por eso su nombre inicia con '99_'.
+-- Así Docker lo ejecuta al final y garantiza que la tabla type_document existe.
+--
+-- Si necesitas agregar más seeds, usa el prefijo '99_' para que siempre vayan al final.
 
 INSERT INTO type_document (id, name) VALUES
   ('00000000-0000-0000-0000-000000000001', 'Cédula de Ciudadanía (CC)'),

@@ -360,3 +360,12 @@ Proyecto académico - SENA
 ## 👨‍💻 Autor
 
 CALZADO J&R - Sistema de Gestión
+
+---
+
+## ⚠️ Notas sobre la base de datos y datos semilla
+
+- Los scripts de inicialización de la base de datos se ejecutan automáticamente al levantar el proyecto con Docker.
+- **El archivo `99_seed_type_documents.sql` inserta los tipos de documento y siempre se ejecuta al final** (por eso su nombre inicia con `99_`).
+- Si necesitas agregar más datos semilla, usa el prefijo `99_` para que Docker los ejecute después de crear todas las tablas.
+- **No es necesario ejecutar manualmente ningún script de seed**. Solo corre `docker compose up -d` y todo estará listo.

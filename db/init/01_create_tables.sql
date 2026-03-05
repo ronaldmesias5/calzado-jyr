@@ -92,6 +92,18 @@ INSERT INTO roles (name, description) VALUES
 ON CONFLICT (name) DO NOTHING;
 
 -- ============================================================
+-- TABLA: type_document
+-- Tipos de documentos de identificación
+-- ============================================================
+CREATE TABLE IF NOT EXISTS type_document (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name VARCHAR(100) UNIQUE NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    deleted_at TIMESTAMP WITH TIME ZONE
+);
+
+-- ============================================================
 -- TABLA: users
 -- DESCRIPCIÓN EN ESPAÑOL:
 -- Tabla central de usuarios del sistema. Almacena información de
@@ -159,6 +171,7 @@ CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 --   used (BOOLEAN): Indica si el token ya fue utilizado
 --   created_at (TIMESTAMP): Fecha de creación del token
 -- ============================================================
+CREATE TABLE IF NOT EXISTS password_reset_tokens (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
     user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     token VARCHAR(255) UNIQUE NOT NULL,
@@ -169,42 +182,6 @@ CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 
 -- Índice en token para búsquedas rápidas
 CREATE INDEX IF NOT EXISTS idx_password_reset_tokens_token ON password_reset_tokens(token);
-
--- ============================================================
--- TIPOS ENUMERADOS ADICIONALES
--- ============================================================
-
--- Tipo ENUM para el estado de los movimientos de insumos
--- Valores: 'entrada' (ingreso al inventario) o 'salida' (egreso del inventario)
-CREATE TYPE supplies_movement_type AS ENUM ('entrada', 'salida');
-
--- Tipo ENUM para el estado de los movimientos de inventario
--- Valores: 'entrada', 'salida', 'ajuste'
-CREATE TYPE inventory_movement_type AS ENUM ('entrada', 'salida', 'ajuste');
-
--- Tipo ENUM para el estado de los pedidos
--- Valores: 'pendiente', 'en_progreso', 'completado', 'cancelado'
-CREATE TYPE order_status AS ENUM ('pendiente', 'en_progreso', 'completado', 'cancelado');
-
--- Tipo ENUM para el estado de las tareas
--- Valores: 'pendiente', 'en_progreso', 'completado', 'cancelado'
-CREATE TYPE task_status AS ENUM ('pendiente', 'en_progreso', 'completado', 'cancelado');
-
--- Tipo ENUM para la prioridad de las tareas
--- Valores: 'baja', 'media', 'alta'
-CREATE TYPE task_priority AS ENUM ('baja', 'media', 'alta');
-
--- Tipo ENUM para el tipo de tarea (ocupación)
--- Valores: 'corte', 'guarnicion', 'soladura', 'emplantillado'
-CREATE TYPE task_type AS ENUM ('corte', 'guarnicion', 'soladura', 'emplantillado');
-
--- Tipo ENUM para el estado de las incidencias
--- Valores: 'abierta', 'en_progreso', 'resuelta', 'cerrada'
-CREATE TYPE incidence_status AS ENUM ('abierta', 'en_progreso', 'resuelta', 'cerrada');
-
--- Tipo ENUM para el tipo de notificación
--- Valores: 'info', 'advertencia', 'error', 'éxito'
-CREATE TYPE notification_type AS ENUM ('info', 'advertencia', 'error', 'exito');
 
 -- ============================================================
 -- TABLA: supplies
@@ -402,18 +379,6 @@ CREATE TABLE IF NOT EXISTS order_details (
     amount INTEGER NOT NULL,
     state order_status DEFAULT 'pendiente' NOT NULL,
     order_date TIMESTAMP WITH TIME ZONE NOT NULL,
-    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
-    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
-    deleted_at TIMESTAMP WITH TIME ZONE
-);
-
--- ============================================================
--- TABLA: type_document
--- Tipos de documentos de identificación
--- ============================================================
-CREATE TABLE IF NOT EXISTS type_document (
-    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    name VARCHAR(100) UNIQUE NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
     deleted_at TIMESTAMP WITH TIME ZONE
