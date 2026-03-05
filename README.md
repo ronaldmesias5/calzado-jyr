@@ -63,6 +63,7 @@ Antes de comenzar, asegúrate de tener instalado:
 | Herramienta        | Versión mínima | Verificar con            |
 | ------------------ | -------------- | ------------------------ |
 | **Python**         | 3.12+          | `python --version`       |
+| **uv**             | 0.1+           | `uv --version`           |
 | **Node.js**        | 20 LTS+        | `node --version`         |
 | **pnpm**           | 9+             | `pnpm --version`         |
 | **Docker**         | 24+            | `docker --version`       |
@@ -160,7 +161,7 @@ docker compose down
 # Detener Y BORRAR todos los datos de la BD (reset completo)
 docker compose down -v
 
-# Reconstruir solo el backend (después de cambiar requirements.txt)
+# Reconstruir solo el backend (después de cambiar pyproject.toml)
 docker compose build be
 
 # Conectarse al shell del contenedor de la BD
@@ -182,19 +183,18 @@ docker stats
 ```bash
 cd be
 
-# Crear entorno virtual
-python -m venv .venv
-source .venv/bin/activate  # Linux/macOS
+# Instalar uv (si aún no lo tienes)
+pip install uv
 
-# Instalar dependencias
-pip install -r requirements.txt
+# Instalar dependencias y crear entorno virtual automáticamente
+uv sync
 
 # Crear archivo .env desde plantilla
 cp .env.example .env
 # Editar .env: DATABASE_URL debe apuntar a tu PostgreSQL local
 
 # Crear usuario administrador inicial
-python scripts/create_admin.py
+uv run python scripts/create_admin.py
 ```
 
 ### Frontend
@@ -217,8 +217,7 @@ cp .env.example .env
 
 ```bash
 cd be
-source .venv/bin/activate
-uvicorn app.main:app --reload
+uv run uvicorn app.main:app --reload
 ```
 
 - API: http://localhost:8000
@@ -254,6 +253,7 @@ pnpm run dev
 - name (varchar) - Nombres
 - last_name (varchar) - Apellidos
 - phone (varchar)
+- identity_document (varchar) - Documento de identidad
 - role_id (UUID, FK → roles)
 - is_active (boolean, default False)
 - is_validated (boolean, default False)
@@ -325,7 +325,8 @@ calzado-jyr/
 │   ├── Dockerfile              # Build multi-stage: base → dev → prod
 │   ├── .dockerignore           # Excluye .venv, __pycache__, .env del contexto Docker
 │   ├── .env.example            # Plantilla de variables para desarrollo sin Docker
-│   ├── requirements.txt        # Dependencias Python fijadas con versión mínima
+│   ├── pyproject.toml          # Configuración de proyecto y dependencias Python
+│   ├── uv.lock                 # Lock file para reproducibilidad exacta de dependencias
 │   ├── app/
 │   │   ├── models/             # Modelos ORM (Role, User, PasswordResetToken)
 │   │   ├── schemas/            # Schemas Pydantic para validación

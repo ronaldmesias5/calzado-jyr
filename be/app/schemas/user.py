@@ -9,8 +9,23 @@ Descripción: Schemas Pydantic para validación de datos de entrada y salida
 import re
 import uuid
 from datetime import datetime
+from enum import Enum
 
 from pydantic import BaseModel, ConfigDict, EmailStr, field_validator
+
+
+# ════════════════════════════════════════
+# 📋 ENUMS para valores predefinidos
+# ════════════════════════════════════════
+
+
+class OccupationType(str, Enum):
+    """Ocupaciones disponibles para empleados."""
+    JEFE = "jefe"
+    CORTADOR = "cortador"
+    GUARNECEDOR = "guarnecedor"
+    SOLADOR = "solador"
+    EMPLANTILLADOR = "emplantillador"
 
 
 # ════════════════════════════════════════
@@ -22,10 +37,12 @@ class UserCreate(BaseModel):
     """Schema para el registro de un nuevo cliente."""
 
     email: EmailStr
-    full_name: str
+    name: str
+    last_name: str
     phone: str | None = None
     identity_document: str | None = None
     business_name: str | None = None
+    occupation: OccupationType | None = None
     password: str
 
     @field_validator("phone")
@@ -62,15 +79,50 @@ class UserCreate(BaseModel):
             raise ValueError("La contraseña debe contener al menos un número")
         return v
 
-    @field_validator("full_name")
+    @field_validator("name")
     @classmethod
-    def validate_full_name(cls, v: str) -> str:
+    def validate_name(cls, v: str) -> str:
         """Valida que el nombre no esté vacío y no exceda el límite."""
         v = v.strip()
         if len(v) < 2:
             raise ValueError("El nombre debe tener al menos 2 caracteres")
         if len(v) > 255:
             raise ValueError("El nombre no puede exceder 255 caracteres")
+        return v
+
+    @field_validator("last_name")
+    @classmethod
+    def validate_last_name(cls, v: str) -> str:
+        """Valida que el apellido no esté vacío y no exceda el límite."""
+        v = v.strip()
+        if len(v) < 2:
+            raise ValueError("El apellido debe tener al menos 2 caracteres")
+        if len(v) > 255:
+            raise ValueError("El apellido no puede exceder 255 caracteres")
+        return v
+
+    @field_validator("business_name")
+    @classmethod
+    def validate_business_name(cls, v: str | None) -> str | None:
+        """Valida el nombre comercial si se proporciona."""
+        if v is not None:
+            v = v.strip()
+            if len(v) < 2:
+                raise ValueError("El nombre comercial debe tener al menos 2 caracteres")
+            if len(v) > 255:
+                raise ValueError("El nombre comercial no puede exceder 255 caracteres")
+        return v
+
+    @field_validator("identity_document")
+    @classmethod
+    def validate_identity_document(cls, v: str | None) -> str | None:
+        """Valida el documento de identidad si se proporciona."""
+        if v is not None:
+            v = v.strip()
+            if len(v) < 8 or len(v) > 10:
+                raise ValueError("El documento de identidad debe tener entre 8 y 10 dígitos")
+            if not v.isdigit():
+                raise ValueError("El documento de identidad debe contener solo dígitos")
         return v
 
 
@@ -139,11 +191,13 @@ class UserResponse(BaseModel):
     """Schema de respuesta con datos del usuario (sin password)."""
     id: uuid.UUID
     email: str
-    full_name: str
+    name: str
+    last_name: str
     phone: str | None
     identity_document: str | None
     is_active: bool
     is_validated: bool
+    must_change_password: bool
     role_name: str | None = None
     business_name: str | None = None
     occupation: str | None = None

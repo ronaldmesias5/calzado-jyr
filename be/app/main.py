@@ -15,6 +15,7 @@ from app.config import settings
 from app.database import engine, Base
 from app.routers.auth import router as auth_router
 from app.routers.users import router as users_router
+from app.routers.admin import router as admin_router
 
 # Importar modelos para que SQLAlchemy los registre en Base.metadata
 from app.models import role, user, password_reset_token  # noqa: F401
@@ -60,6 +61,7 @@ app.add_middleware(
 
 app.include_router(auth_router)
 app.include_router(users_router)
+app.include_router(admin_router)
 
 # ────────────────────────────
 # 📍 Endpoint raíz de bienvenida

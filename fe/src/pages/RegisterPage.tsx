@@ -19,7 +19,8 @@ export function RegisterPage() {
   const { register } = useAuth();
 
   const [formData, setFormData] = useState({
-    full_name: "",
+    name: "",
+    last_name: "",
     email: "",
     phone: "",
     identity_document: "",
@@ -59,7 +60,8 @@ export function RegisterPage() {
 
     try {
       await register({
-        full_name: formData.full_name,
+        name: formData.name,
+        last_name: formData.last_name,
         email: formData.email,
         phone: formData.phone || undefined,
         identity_document: formData.identity_document || undefined,
@@ -70,7 +72,8 @@ export function RegisterPage() {
         "Cuenta creada exitosamente. Pendiente de validación por el administrador. Revisa tu correo para la confirmación de tu cuenta."
       );
       setFormData({ 
-        full_name: "", 
+        name: "",
+        last_name: "",
         email: "", 
         phone: "",
         identity_document: "",
@@ -113,13 +116,24 @@ export function RegisterPage() {
 
       <form onSubmit={handleSubmit} noValidate>
         <InputField
-          label="Nombre completo"
-          name="full_name"
+          label="Nombres"
+          name="name"
           type="text"
-          value={formData.full_name}
-          placeholder="Ronald Guerrero"
-          autoComplete="name"
+          value={formData.name}
+          placeholder="Juan Carlos"
+          autoComplete="given-name"
           autoFocus
+          icon={<User className="h-5 w-5" />}
+          onChange={handleChange}
+        />
+
+        <InputField
+          label="Apellidos"
+          name="last_name"
+          type="text"
+          value={formData.last_name}
+          placeholder="García Rodríguez"
+          autoComplete="family-name"
           icon={<User className="h-5 w-5" />}
           onChange={handleChange}
         />

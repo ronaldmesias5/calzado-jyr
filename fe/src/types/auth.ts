@@ -10,7 +10,8 @@
 
 export interface RegisterRequest {
   email: string;
-  full_name: string;
+  name: string;
+  last_name: string;
   phone?: string;
   identity_document?: string;
   business_name?: string;
@@ -47,7 +48,8 @@ export interface RefreshTokenRequest {
 export interface UserResponse {
   id: string;
   email: string;
-  full_name: string;
+  name: string;
+  last_name: string;
   phone: string | null;
   identity_document: string | null;
   is_active: boolean;

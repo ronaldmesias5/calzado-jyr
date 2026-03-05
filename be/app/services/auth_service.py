@@ -61,7 +61,8 @@ def register_user(db: Session, user_data: UserCreate) -> User:
     # Crear el usuario con cuenta inactiva (pendiente de validación)
     new_user = User(
         email=user_data.email,
-        full_name=user_data.full_name,
+        name=user_data.name,
+        last_name=user_data.last_name,
         phone=user_data.phone,
         identity_document=user_data.identity_document,
         business_name=user_data.business_name,

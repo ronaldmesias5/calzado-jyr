@@ -28,13 +28,16 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
-# Copiar SOLO requirements primero para aprovechar la caché de capas de Docker.
+# Instalar uv (gestor de dependencias ultra-rápido para Python)
+RUN pip install --no-cache-dir uv
+
+# Copiar SOLO requirements.txt primero para aprovechar la caché de capas de Docker.
 # ¿Por qué? Si el código cambia pero requirements.txt no, Docker reutiliza
-#           la capa de pip install → builds mucho más rápidos.
+#           la capa de uv pip install → builds mucho más rápidos.
 COPY requirements.txt .
 
-RUN pip install --no-cache-dir --upgrade pip \
-    && pip install --no-cache-dir -r requirements.txt
+# Instalar dependencias con uv (10-100x más rápido que pip)
+RUN uv pip install --system --no-cache -r requirements.txt
 
 # ────────────────────────────
 # Stage 2 — dev

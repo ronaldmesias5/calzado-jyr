@@ -9,7 +9,7 @@ Descripción: Modelo ORM que representa la tabla `users` en PostgreSQL.
 import uuid
 from datetime import datetime
 
-from sqlalchemy import Boolean, DateTime, ForeignKey, String, func
+from sqlalchemy import Boolean, DateTime, Enum, ForeignKey, String, func
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
@@ -43,7 +43,12 @@ class User(Base):
         nullable=False,
     )
 
-    full_name: Mapped[str] = mapped_column(
+    name: Mapped[str] = mapped_column(
+        String(255),
+        nullable=False,
+    )
+
+    last_name: Mapped[str] = mapped_column(
         String(255),
         nullable=False,
     )
@@ -104,7 +109,7 @@ class User(Base):
 
     # Solo para empleados (guarnición, solador, cortador, emplantillador)
     occupation: Mapped[str | None] = mapped_column(
-        String(100),
+        Enum("jefe", "cortador", "guarnecedor", "solador", "emplantillador", name="occupation_type"),
         nullable=True,
     )
 

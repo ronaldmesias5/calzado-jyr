@@ -27,19 +27,33 @@ export function AuthLayout({ children, title, subtitle }: AuthLayoutProps) {
               alt="CALZADO J&R - Águila"
               className="h-10 w-10 object-contain"
             />
-            <span className="text-lg font-bold text-[#000000]">CALZADO J&R</span>
+            <span className="font-bold" style={{ color: '#FFD700', fontFamily: 'Montserrat, sans-serif', letterSpacing: 1, fontSize: '1.1rem' }}>CALZADO J&R</span>
           </Link>
           <Link
             to="/login"
-            className="text-sm font-medium text-[#000000] hover:text-[#1e3a8a]"
+            className="px-4 py-2 rounded-md bg-[#1e40af] text-white font-semibold text-sm shadow relative overflow-hidden"
+            style={{ textDecoration: 'none' }}
           >
-            Iniciar sesión
+            <span className="relative z-10">Iniciar sesión</span>
+            <span
+              className="absolute left-0 top-0 h-full w-full"
+              style={{
+                background: 'linear-gradient(120deg, transparent 0%, #FFD700 50%, transparent 100%)',
+                opacity: 0.7,
+                transform: 'translateX(-100%)',
+                animation: 'shine 1.5s infinite'
+              }}
+            />
           </Link>
+          <style>{`
+            @keyframes shine {
+              0% { transform: translateX(-100%); }
+              60% { transform: translateX(120%); }
+              100% { transform: translateX(120%); }
+            }
+          `}</style>
         </div>
       </header>
-
-      {/* Línea decorativa azul */}
-      <div className="h-1 bg-[#1e40af]" />
 
       {/* ════════════════════════════════════════ */}
       {/* Contenido principal centrado */}
