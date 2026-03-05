@@ -126,6 +126,7 @@ CREATE TABLE IF NOT EXISTS users (
     last_name VARCHAR(255) NOT NULL,
     phone VARCHAR(20),
     identity_document VARCHAR(20),
+    identity_document_type_id UUID REFERENCES type_document(id),
     role_id UUID NOT NULL REFERENCES roles(id),
     is_active BOOLEAN DEFAULT FALSE NOT NULL,
     is_validated BOOLEAN DEFAULT FALSE NOT NULL,
